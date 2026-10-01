@@ -1,12 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'class', // <--- This enables toggling dark mode via the .dark class
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  darkMode: 'class',
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['"Inter Variable"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'ui-serif', 'Georgia', 'serif']
+      }
+    }
   },
-  plugins: [],
-}
+  plugins: []
+};
