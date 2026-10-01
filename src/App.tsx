@@ -39,7 +39,7 @@ export default function App() {
       >
         {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </button>
-      <main className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+      <main>
         <AcademicPathDemo />
       </main>
     </>
