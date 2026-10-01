@@ -1,87 +1,51 @@
-# Academic Path
+# Academic Path Intelligence
 
-A lightweight React + TypeScript + Tailwind learning path builder, built with Vite.
+A learning-roadmap builder. Pick the technologies you know or want to build on, and it lays out a path with every prerequisite placed ahead of the subject that needs it. It runs entirely in the browser, with no backend.
 
-## 🚀 Project Overview
+## Features
 
-`academic-path` is a client-side web app that helps learners plan a curriculum path with modules, skills, and stack-specific roadmaps.
+- Skill picker grouped by category, with search and a "Clear all" button
+- Three example starting points (self-taught web developer, aspiring ML engineer, backend to infrastructure)
+- A roadmap that updates as you pick, with each step labelled Prerequisite, Foundation, Core track or Advanced track
+- "Review first" gaps and the reason each subject is on the path ("Because you picked" / "Needed by")
+- A detail view per subject with its learning resources
+- Mark steps as done and watch a progress bar
+- Copy the whole path as plain text
+- Light and dark theme, saved in `localStorage` and defaulting to your system setting
 
-Key features:
-- Module grid and modal details (`RoadmapGrid`, `ModuleModal`)
-- Stack selection toolbar (`StackToolbar`)
-- Skills selector and filtering (`SkillsSelector`)
-- Persistent path state management (`useAcademicPath` custom hook)
-
-## 🧰 Tech Stack
-
-- Vite
-- React 18
-- TypeScript
-- Tailwind CSS
-- PostCSS
-- lucide-react (icons)
-
-## 📦 Installation
+## Setup
 
 ```bash
 npm install
+npm run dev      # http://localhost:5173
+npm run build    # type-check and production build into dist/
+npm run preview  # serve the production build
 ```
 
-## ▶️ Development
+Stack: Vite, React 18, TypeScript, Tailwind CSS 3, lucide-react.
 
-Start development server:
+## Project structure
 
-```bash
-npm run dev
+```
+src/
+  main.tsx              entry point, loads the fonts and global CSS
+  App.tsx               shell: light/dark toggle plus the demo
+  index.css             Tailwind layers, body colours, .accent, .custom-scrollbar
+  demo/
+    academic-path/      the demo, copied unchanged from the portfolio
+      AcademicPathDemo.tsx
+      constants.ts      subject models, skill categories, resources, examples
+      types.ts
+      utils.ts          roadmap generation
+  lib/
+    useDialog.ts        dialog behaviour (Esc, focus trap, scroll lock) used by the demo
 ```
 
-Open `http://localhost:5173` in your browser.
+`src/demo/` is a plain copy of the demo folder from the portfolio. To update it, copy the folder over. The only edit after copying is the `useDialog` import in `AcademicPathDemo.tsx`, which points at `../../lib/useDialog`.
 
-## 🏗️ Build
+## Limits
 
-```bash
-npm run build
-```
-
-## 📡 Preview
-
-```bash
-npm run preview
-```
-
-## 🗂️ Project Structure
-
-- `src/main.tsx` — app entry point
-- `src/App.tsx` — root component
-- `src/index.css` — Tailwind and global styles
-- `src/components/` — UI components
-- `src/hooks/useAcademicPath.ts` — custom hook for path state
-- `src/constants/index.ts` — constant definitions
-- `src/types/index.ts` — shared TypeScript types
-- `src/utils/index.ts` — client utilities
-
-## 🛠️ Customization
-
-1. Update module and skill data in `src/constants/index.ts`.
-2. Extend types in `src/types/index.ts`.
-3. Add new components to `src/components/` and hook into `App.tsx`.
-
-## 🧪 Testing
-
-No test runner is included by default. Add your preferred test framework (e.g. Vitest) as needed.
-
-## 💡 Notes
-
-- The app is configured as `private` in `package.json`.
-- Build runs `tsc` and `vite build` for type safety and production assets.
-
-## 🤝 Contributing
-
-1. Fork this repository.
-2. Create a feature branch: `git checkout -b feat/my-feature`
-3. Commit your changes: `git commit -m "feat: description"`
-4. Push and open a PR.
-
-## 📄 License
-
-Add your license (MIT/Apache/BSD) if desired.
+- It is rule-based, not machine learning.
+- There are 13 subject models.
+- The resource links are hand-picked and are not checked automatically.
+- Picks that map to no subject are listed as "not mapped".
