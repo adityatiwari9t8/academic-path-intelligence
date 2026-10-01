@@ -1,106 +1,47 @@
-import { useState, useEffect } from 'react';
-import { useAcademicPath } from './hooks/useAcademicPath';
-import Hero from './components/Hero';
-import SkillSelector from './components/SkillsSelector';
-import StackToolbar from './components/StackToolbar';
-import RoadmapGrid from './components/RoadmapGrid';
-import ModuleModal from './components/ModuleModal';
+import { useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
+import AcademicPathDemo from './demo/academic-path/AcademicPathDemo';
+
+type Theme = 'light' | 'dark';
+const STORAGE_KEY = 'theme';
+
+function initialTheme(): Theme {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'light' || saved === 'dark') return saved;
+  } catch {
+    // storage unavailable: fall through to the system preference
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
 
 export default function App() {
-  // --- Dark Mode Implementation ---
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [theme, setTheme] = useState<Theme>(initialTheme);
 
   useEffect(() => {
-    // On mount, check if the user has a saved preference or prefer-color-scheme
-    const isDark = 
-      localStorage.theme === 'dark' || 
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    setIsDarkMode(isDark);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      // ignore: the choice just won't persist
     }
-  }, []);
+  }, [theme]);
 
-  const toggleDarkMode = () => {
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark');
-      localStorage.theme = 'light';
-      setIsDarkMode(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.theme = 'dark';
-      setIsDarkMode(true);
-    }
-  };
-  // --------------------------------
-
-  const {
-    selectedSkills,
-    isGenerating,
-    showResult,
-    searchQuery,
-    setSearchQuery,
-    activeDetailModule,
-    setActiveDetailModule,
-    roadmapModulesState,
-    resultsRef,
-    filteredCategories,
-    toggleSkill,
-    handleGenerate,
-    reset,
-    setShowResult
-  } = useAcademicPath();
+  const next = theme === 'dark' ? 'light' : 'dark';
 
   return (
-    /* Added a full-screen wrapper with background/text transitions */
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
-      
-      {/* Dark Mode Toggle Button */}
-      <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50">
-        <button
-          onClick={toggleDarkMode}
-          className="p-2 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
-          aria-label="Toggle Dark Mode"
-        >
-          {isDarkMode ? '☀️' : '🌙'}
-        </button>
-      </div>
-
-      <div className={`max-w-7xl mx-auto py-8 md:py-12 px-4 md:px-8 space-y-12 relative ${selectedSkills.length > 0 && !showResult ? 'pb-40' : 'pb-12'}`}>
-        
-        <ModuleModal module={activeDetailModule} onClose={() => setActiveDetailModule(null)} />
-
-        <Hero />
-
-        <SkillSelector 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          filteredCategories={filteredCategories}
-          selectedSkills={selectedSkills}
-          toggleSkill={toggleSkill}
-        />
-
-        {!showResult && (
-          <StackToolbar 
-            selectedSkills={selectedSkills}
-            toggleSkill={toggleSkill}
-            reset={reset}
-            handleGenerate={handleGenerate}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        <RoadmapGrid 
-          showResult={showResult}
-          setShowResult={setShowResult}
-          roadmapModulesState={roadmapModulesState}
-          selectedSkillsLength={selectedSkills.length}
-          setActiveDetailModule={setActiveDetailModule}
-          resultsRef={resultsRef}
-        />
-
-      </div>
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={() => setTheme(next)}
+        aria-label={`Switch to ${next} theme`}
+        className="fixed right-4 top-4 z-[100] flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-white/10 dark:bg-[#161618] dark:text-slate-200 dark:hover:bg-[#222225]"
+      >
+        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+      <main className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+        <AcademicPathDemo />
+      </main>
+    </>
   );
 }
